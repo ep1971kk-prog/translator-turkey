@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>터키 여행 번역기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: 여행 중 손에 쥐는 실용 도구, 단호하고 친절하게
+IDEA: 이즈니크 타일로 장정된 포켓 회화 수첩
+PICTURE: 상단 입력·검색 상자 자체가 주인공, 아래 문장 카드
+COLOUR and TYPE: 이즈니크 코발트 + 터키석 + 국기 빨강 / Noto Sans KR + Outfit
+LAYOUT: 한 열, 카테고리 칩 가로 스크롤, 카드 그리드
+*/
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0b1631);--panel:light-dark(#f2f6fc,#122452);--ink:light-dark(#0b1631,#eef3ff);
+--mute:light-dark(#4a5878,#a9b7da);--blue:light-dark(#163fa0,#7fa4ff);--teal:light-dark(#0f8f8f,#3fd0c9);
+--red:#e30a17;--line:light-dark(#d6e0f0,#24396e);--card:light-dark(#fff,#0f1e45)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
+button,input,textarea{font:inherit;color:inherit}
+.top{background:#163fa0;color:#fff;padding:22px max(5vw,16px) 64px;position:relative;overflow:hidden}
+.top svg.tile{position:absolute;inset:0;width:100%;height:100%;opacity:.16;pointer-events:none}
+.top h1{margin:0;font-size:clamp(26px,5vw,40px);line-height:1.08;font-weight:900;position:relative;text-wrap:balance}
+.top p{margin:6px 0 0;position:relative;color:#dbe6ff;font-size:15px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 max(4vw,14px) 48px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-top:-44px;position:relative;padding:16px;box-shadow:0 10px 30px rgba(11,22,49,.14)}
+.box label{font-weight:700;font-size:14px;color:var(--mute)}
+textarea{width:100%;min-height:76px;resize:vertical;border:2px solid var(--line);border-radius:12px;padding:12px;font-size:17px;background:var(--bg);margin-top:6px}
+textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:999px;border:0;background:var(--blue);color:#fff;font-weight:700;text-decoration:none;cursor:pointer;font-size:15px}
+.btn.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+.btn.red{background:var(--red)}
+.hint{font-size:13px;color:var(--mute);margin:8px 0 0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:18px 0 10px;scrollbar-width:thin}
+.chip{flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-weight:500}
+.chip[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+.count{font-size:14px;color:var(--mute);margin:4px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px;display:flex;flex-direction:column;gap:4px}
+.card .ko{font-weight:700;font-size:16px}
+.card .tr{font-family:Outfit,"Noto Sans KR",sans-serif;font-size:22px;font-weight:700;color:var(--blue);line-height:1.2;overflow-wrap:anywhere}
+.card .pr{color:var(--teal);font-size:15px;font-weight:500}
+.card .nt{font-size:13px;color:var(--mute)}
+.card .row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.ib{min-width:44px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:0 10px;font-size:14px;font-weight:500}
+.ib svg{width:20px;height:20px}
+.ib.on{color:#d4a100}
+.empty{padding:28px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:16px}
+.info{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px}
+.info section{background:var(--panel);border-radius:16px;padding:16px}
+.info h2{margin:0 0 8px;font-size:18px}
+.info ul{margin:0;padding-left:18px}.info li{margin:3px 0}
+.info b{color:var(--blue)}
+.foot{font-size:13px;color:var(--mute);margin-top:18px}
+.show{position:fixed;inset:0;background:#fff;color:#0b1631;z-index:10;display:none;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center;gap:18px}
+.show.open{display:flex}
+.show .big{font-family:Outfit,sans-serif;font-weight:700;font-size:clamp(34px,9vw,84px);line-height:1.1;color:#163fa0;overflow-wrap:anywhere;text-wrap:balance}
+.show .sm{font-size:18px;color:#4a5878}
+.show .bar{position:absolute;top:0;left:0;right:0;height:10px;background:var(--red)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0b1631;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20;max-width:90vw}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+<svg class="tile" aria-hidden="true"><defs><pattern id="p" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M32 4 L60 32 L32 60 L4 32Z" fill="none" stroke="#fff" stroke-width="2"/><circle cx="32" cy="32" r="9" fill="#fff"/><circle cx="0" cy="0" r="6" fill="#fff"/><circle cx="64" cy="64" r="6" fill="#fff"/><circle cx="64" cy="0" r="6" fill="#fff"/><circle cx="0" cy="64" r="6" fill="#fff"/></pattern></defs><rect width="100%" height="100%" fill="url(#p)"/></svg>
+<h1>터키 여행 번역기</h1>
+<p>자주 쓰는 문장을 골라 터키어로 보여주고 들려주세요 · 인터넷 없이도 문장집은 작동합니다</p>
+</header>
+
+<main class="wrap">
+<div class="box">
+<label for="q">하고 싶은 말을 입력하세요 (문장집 검색 + 자유 번역)</label>
+<textarea id="q" placeholder="예: 얼마예요 / 화장실 / 택시미터"></textarea>
+<div class="acts">
+<a class="btn" id="gt" href="https://translate.google.com/?sl=ko&tl=tr&op=translate">구글 번역으로 번역</a>
+<a class="btn alt" id="pp" href="https://papago.naver.com/?sk=ko&tk=tr">파파고로 번역</a>
+<a class="btn alt" href="https://translate.google.com/?sl=tr&tl=ko&op=translate">터키어 → 한국어</a>
+</div>
+<p class="hint">입력하면 아래 문장집에서 바로 찾아줍니다. 문장집에 없는 말은 버튼을 눌러 번역 사이트에서 번역하세요(인터넷 필요). 짧고 단순한 문장일수록 정확합니다.</p>
+</div>
+
+<nav class="chips" id="chips" aria-label="카테고리"></nav>
+<p class="count" id="count"></p>
+<div class="grid" id="list"></div>
+
+<div class="info">
+<section><h2>긴급 연락처</h2><ul>
+<li>터키 긴급전화(경찰·구급·소방 통합): <b>112</b></li>
+<li>외교부 영사콜센터(24시간): <b>+82-2-3210-0404</b></li>
+<li>위급할 땐 가이드에게 먼저 연락하고, 이 화면의 ‘긴급’ 문장을 크게 보여주세요.</li>
+</ul></section>
+<section><h2>발음 요령</h2><ul>
+<li><b>ç</b> = ㅊ, <b>ş</b> = ㅅ(쉬), <b>c</b> = ㅈ</li>
+<li><b>ı</b>(점 없는 i) = ‘으’, <b>ö</b> = ‘외’, <b>ü</b> = ‘위’</li>
+<li><b>ğ</b>는 거의 소리 나지 않고 앞 모음을 길게</li>
+<li>한글 발음은 근사치예요. 스피커 버튼으로 들어보세요.</li>
+</ul></section>
+<section><h2>잘 통하는 요령</h2><ul>
+<li>문장 끝에 <b>lütfen</b>(뤼트펜, 부탁해요)을 붙이면 공손해집니다.</li>
+<li>가격은 ‘여기에 써 주시겠어요?’ 문장을 보여주고 숫자로 받으세요.</li>
+<li>‘크게 보기’로 화면을 상대에게 그대로 보여주는 게 가장 확실합니다.</li>
+</ul></section>
+</div>
+<p class="foot">음성 재생은 기기에 터키어 음성이 설치되어 있어야 합니다(대부분의 스마트폰 기본 제공). 즐겨찾기는 이 브라우저에만 저장됩니다.</p>
+</main>
+
+<div class="show" id="show" role="dialog" aria-modal="true" aria-label="크게 보기">
+<div class="bar"></div>
+<div class="big" id="sBig"></div>
+<div class="sm" id="sPr"></div>
+<div class="sm" id="sKo"></div>
+<div class="acts" style="justify-content:center">
+<button class="btn" id="sSpeak">소리 듣기</button>
+<button class="btn alt" id="sClose" style="background:#eef3ff;color:#0b1631">닫기</button>
+</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+{
+const CATS=[["all","전체"],["fav","즐겨찾기"],["basic","인사·기본"],["shop","쇼핑·흥정"],["food","식당·카페"],["move","이동·택시"],["hotel","호텔"],["tour","관광"],["sos","긴급·병원"],["num","숫자"]];
+const P=[
+["basic","안녕하세요","Merhaba","메르하바"],
+["basic","좋은 아침이에요","Günaydın","귀나이든"],
+["basic","감사합니다","Teşekkür ederim","테셰퀴르 에데림"],
+["basic","정말 감사합니다","Çok teşekkür ederim","촉 테셰퀴르 에데림"],
+["basic","네","Evet","에벳"],
+["basic","아니요","Hayır","하이으르"],
+["basic","실례합니다 (사람을 부를 때)","Affedersiniz","아페데르시니즈"],
+["basic","죄송합니다","Özür dilerim","외쥐르 딜레림"],
+["basic","괜찮아요 / 문제없어요","Sorun yok","소룬 욕"],
+["basic","안녕히 계세요 (떠날 때)","Hoşça kalın","호슈차 칼른"],
+["basic","저는 한국 사람이에요","Ben Güney Koreliyim","벤 귀네이 코렐리임"],
+["basic","터키어를 못해요","Türkçe bilmiyorum","튀르크체 빌미요룸"],
+["basic","영어 할 줄 아세요?","İngilizce biliyor musunuz?","인길리즈제 빌리요르 무수누즈"],
+["basic","이해를 못 했어요","Anlamadım","안라마듬"],
+["basic","천천히 말해 주세요","Lütfen yavaş konuşun","뤼트펜 야바슈 코누순"],
+["basic","여기에 써 주시겠어요?","Buraya yazar mısınız?","부라야 야자르 므스느즈","가격·주소를 숫자/글로 받을 때 유용"],
+["basic","화장실이 어디예요?","Tuvalet nerede?","투발렛 네레데"],
+["shop","이거 얼마예요?","Bu ne kadar?","부 네 카다르"],
+["shop","너무 비싸요","Çok pahalı","촉 파할르"],
+["shop","할인해 주실 수 있나요?","İndirim yapar mısınız?","인디림 야파르 므스느즈","바자르(시장)에서 흥정할 때"],
+["shop","그냥 구경하는 중이에요","Sadece bakıyorum","사데제 바크요룸"],
+["shop","이걸로 살게요","Bunu alıyorum","부누 알르요룸"],
+["shop","카드로 계산해도 돼요?","Kartla ödeyebilir miyim?","카르틀라 외데예빌리르 미임"],
+["shop","유로 받으세요?","Euro kabul ediyor musunuz?","유로 카불 에디요르 무수누즈"],
+["shop","다른 색 있어요?","Başka rengi var mı?","바슈카 렝기 바르 므"],
+["shop","다른 사이즈 있어요?","Başka bedeni var mı?","바슈카 베데니 바르 므"],
+["shop","영수증 주시겠어요?","Fiş alabilir miyim?","피슈 알라빌리르 미임"],
+["shop","봉투 하나 주세요","Poşet alabilir miyim?","포셋 알라빌리르 미임"],
+["food","메뉴판 주시겠어요?","Menü alabilir miyim?","메뉘 알라빌리르 미임"],
+["food","이걸로 주세요 (메뉴를 가리키며)","Bunu istiyorum","부누 이스티요룸"],
+["food","계산서 주세요","Hesap lütfen","헤삽 뤼트펜"],
+["food","물 주세요","Su lütfen","수 뤼트펜"],
+["food","차이(홍차) 한 잔 주세요","Bir çay lütfen","비르 차이 뤼트펜"],
+["food","터키 커피 한 잔 주세요","Bir Türk kahvesi lütfen","비르 튀르크 카흐베시 뤼트펜"],
+["food","설탕 없이 해 주세요 (터키 커피)","Sade olsun","사데 올순","터키 커피는 주문할 때 단맛을 정합니다"],
+["food","맵지 않게 해 주세요","Acısız olsun lütfen","아즈스즈 올순 뤼트펜"],
+["food","돼지고기 들어 있어요?","İçinde domuz eti var mı?","이친데 도무즈 에티 바르 므"],
+["food","땅콩 알레르기가 있어요","Yer fıstığına alerjim var","예르 프스트으나 알레르짐 바르"],
+["food","정말 맛있어요","Çok lezzetli","촉 레제틀리"],
+["food","포장해 주시겠어요?","Paket yapar mısınız?","파켓 야파르 므스느즈"],
+["move","이 주소로 가 주세요","Bu adrese gidelim lütfen","부 아드레세 기델림 뤼트펜","주소를 함께 보여주세요"],
+["move","미터기 켜 주시겠어요?","Taksimetreyi açar mısınız?","탁시메트레이 아차르 므스느즈","택시 탈 때 꼭"],
+["move","여기서 세워 주세요","Burada durun lütfen","부라다 두룬 뤼트펜"],
+["move","호텔까지 얼마예요?","Otele kadar ne kadar?","오텔레 카다르 네 카다르"],
+["move","가까워요?","Yakın mı?","야큰 므"],
+["move","걸어서 갈 수 있어요?","Yürüyerek gidilir mi?","위뤼예렉 기딜리르 미"],
+["move","버스는 어디 있어요?","Otobüs nerede?","오토뷔스 네레데"],
+["move","길을 잃었어요","Kayboldum","카이볼둠"],
+["hotel","와이파이 비밀번호가 뭐예요?","Wi-Fi şifresi nedir?","와이파이 시프레시 네디르"],
+["hotel","아침 식사는 몇 시예요?","Kahvaltı saat kaçta?","카흐발트 사앗 카치타"],
+["hotel","방에 수건이 없어요","Odada havlu yok","오다다 하블루 욕"],
+["hotel","에어컨이 작동하지 않아요","Klima çalışmıyor","클리마 찰르슈므요르"],
+["hotel","뜨거운 물이 안 나와요","Sıcak su yok","스작 수 욕"],
+["hotel","방 열쇠(카드)를 잃어버렸어요","Oda kartımı kaybettim","오다 카르트므 카이벳팀"],
+["tour","사진 좀 찍어 주시겠어요?","Fotoğrafımızı çeker misiniz?","포토으라프므즈 체케르 미시니즈"],
+["tour","여기서 사진 찍어도 돼요?","Fotoğraf çekebilir miyim?","포토으라프 체케빌리르 미임"],
+["tour","입장료가 얼마예요?","Giriş ücreti ne kadar?","기리슈 위즈레티 네 카다르"],
+["tour","몇 시에 문 닫아요?","Saat kaçta kapanıyor?","사앗 카치타 카파느요르"],
+["tour","정말 아름다워요","Çok güzel","촉 귀젤"],
+["sos","도와주세요!","Yardım edin!","야르듬 에딘"],
+["sos","경찰을 불러 주세요!","Polis çağırın!","폴리스 차으른"],
+["sos","구급차를 불러 주세요!","Ambulans çağırın!","암불란스 차으른"],
+["sos","병원이 어디예요?","Hastane nerede?","하스타네 네레데"],
+["sos","약국이 어디예요?","Eczane nerede?","에즈자네 네레데"],
+["sos","몸이 안 좋아요","Kendimi iyi hissetmiyorum","켄디미 이이 히셋미요룸"],
+["sos","지갑을 잃어버렸어요","Cüzdanımı kaybettim","쥐즈다느므 카이벳팀"],
+["sos","여권을 잃어버렸어요","Pasaportumu kaybettim","파사포르투무 카이벳팀"],
+["num","1 · 2 · 3","bir · iki · üç","비르 · 이키 · 위치"],
+["num","4 · 5 · 6","dört · beş · altı","되르트 · 베슈 · 알트"],
+["num","7 · 8 · 9 · 10","yedi · sekiz · dokuz · on","예디 · 세키즈 · 도쿠즈 · 온"],
+["num","20 · 50 · 100","yirmi · elli · yüz","이르미 · 엘리 · 위즈"],
+["num","1000","bin","빈"],
+["num","리라 (터키 화폐)","lira","리라"]
+];
+const $=s=>document.querySelector(s);
+let cat="all",favs=[];
+try{favs=JSON.parse(localStorage.getItem("trFav")||"[]")}catch(e){}
+const saveFav=()=>{try{localStorage.setItem("trFav",JSON.stringify(favs))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>s.toLowerCase().replace(/\s+/g,"");
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),2200)};
+const ICON={spk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>',
+big:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+starO:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>'};
+function speak(text){
+  try{
+    if(!("speechSynthesis" in window)){toast("이 브라우저는 음성 재생을 지원하지 않아요");return}
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text.replace(/·/g,","));u.lang="tr-TR";u.rate=.85;
+    const v=speechSynthesis.getVoices().find(v=>/^tr/i.test(v.lang));
+    if(v)u.voice=v;else toast("터키어 음성이 없으면 다른 언어로 읽힐 수 있어요");
+    speechSynthesis.speak(u);
+  }catch(e){toast("음성 재생을 할 수 없어요")}
+}
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
+$("#chips").innerHTML=CATS.map(([k,n])=>`<button class="chip" data-c="${k}" aria-pressed="${k===cat}">${n}</button>`).join("");
+function render(){
+  const q=norm($("#q").value);
+  let rows=P.map((p,i)=>({p,i})).filter(({p,i})=>cat==="all"||(cat==="fav"?favs.includes(p[2]):p[0]===cat));
+  if(q)rows=rows.filter(({p})=>norm(p[1]+p[2]+p[3]+(p[4]||"")).includes(q));
+  $("#count").textContent=q?`‘${$("#q").value.trim()}’ 관련 문장 ${rows.length}개`:`문장 ${rows.length}개`;
+  $("#list").innerHTML=rows.length?rows.map(({p,i})=>{const on=favs.includes(p[2]);return `<article class="card">
+<div class="ko">${esc(p[1])}</div><div class="tr" lang="tr">${esc(p[2])}</div><div class="pr">${esc(p[3])}</div>${p[4]?`<div class="nt">${esc(p[4])}</div>`:""}
+<div class="row"><button class="ib" data-a="spk" data-i="${i}" aria-label="소리 듣기">${ICON.spk}듣기</button><button class="ib" data-a="big" data-i="${i}" aria-label="크게 보기">${ICON.big}크게</button><button class="ib" data-a="copy" data-i="${i}" aria-label="복사">${ICON.copy}</button><button class="ib ${on?"on":""}" data-a="fav" data-i="${i}" aria-label="즐겨찾기" aria-pressed="${on}">${on?ICON.star:ICON.starO}</button></div></article>`}).join(""):
+  `<div class="empty">${cat==="fav"&&!q?"별표를 눌러 자주 쓸 문장을 모아 두세요.":"문장집에 없는 말이에요. 위의 ‘구글 번역’ 또는 ‘파파고’ 버튼으로 번역해 보세요."}</div>`;
+  const t=encodeURIComponent($("#q").value.trim());
+  $("#gt").href=`https://translate.google.com/?sl=ko&tl=tr&text=${t}&op=translate`;
+  $("#pp").href=`https://papago.naver.com/?sk=ko&tk=tr&st=${t}`;
+}
+let cur=null;
+function openShow(p){cur=p;$("#sBig").textContent=p[2];$("#sPr").textContent=p[3];$("#sKo").textContent=p[1];$("#show").classList.add("open");$("#sClose").focus()}
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;cat=b.dataset.c;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));render()});
+$("#q").addEventListener("input",render);
+$("#list").addEventListener("click",async e=>{
+  const b=e.target.closest(".ib");if(!b)return;const p=P[+b.dataset.i];
+  if(b.dataset.a==="spk")speak(p[2]);
+  if(b.dataset.a==="big")openShow(p);
+  if(b.dataset.a==="fav"){favs=favs.includes(p[2])?favs.filter(x=>x!==p[2]):[...favs,p[2]];saveFav();render()}
+  if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(p[2]);toast("복사했어요: "+p[2])}catch(err){toast("복사할 수 없어요. 길게 눌러 선택하세요")}}
+});
+$("#sSpeak").addEventListener("click",()=>cur&&speak(cur[2]));
+$("#sClose").addEventListener("click",()=>$("#show").classList.remove("open"));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#show").classList.remove("open")});
+render();
+}
+</script>
+</body>
+</html>
